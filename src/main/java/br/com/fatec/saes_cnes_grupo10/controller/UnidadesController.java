@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Optional;
 
 @RestController
@@ -25,13 +24,17 @@ public class UnidadesController {
         return ResponseEntity.ok().body(UnidadesService.listar());
     }
 
+    @PostMapping
+    public ResponseEntity<Unidades> salvar(@RequestBody Unidades Unidades) {
+        Unidades novoUnidades = UnidadesService.salvar(Unidades);
+        return ResponseEntity.ok(novoUnidades);
+    }
+
     @PostMapping("/importar")
     public ResponseEntity<String> importarArquivo(
             @RequestParam("arquivo") MultipartFile arquivo) {
-
         try {
             int quantidade = UnidadesService.importarArquivo(arquivo);
-
             return ResponseEntity.ok(
                     quantidade + " usuários importados com sucesso."
             );
@@ -66,5 +69,29 @@ public class UnidadesController {
         return UnidadesService.atualizar(id, Unidades)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    
+    //ADICIONAR FILTRO!
+    @GetMapping("/filtro")
+    public ResponseEntity<List<String>> filtrar(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String codigoCnes,
+            @RequestParam(required = false) String UF,
+            @RequestParam(required = false) String municipio,
+            @RequestParam(required = false) String tipoEstabelecimento,
+            @RequestParam(required = false) String esferaAdministrativa,
+            @RequestParam(required = false) boolean atendeSus,
+            @RequestParam(required = false) long[] latitudeLongitude) {
+
+        // Lógica de filtragem integrada aqui
+        List<Unidades> unidades = UnidadesService.filtrar(nome, categoria, codigoCnes, UF,
+                esferaAdministrativa, atendeSus, latitudeLongitude);
+
+        if (unidades.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(Unidades);
     }
 }

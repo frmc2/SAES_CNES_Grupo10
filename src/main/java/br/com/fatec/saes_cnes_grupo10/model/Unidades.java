@@ -20,11 +20,12 @@ public class Unidades {
     private boolean atendeSus;
     private long[] latitudeLongitude = new long[2];
 
-    public Unidades() {}
+    public Unidades() {
+    }
 
-    public Unidades (String nome, String codigoCnes, String UF, String municipio,
-                     String tipoEstabelecimento, String esferaAdministrativa,
-                     boolean atendeSus, long[] latitudeLongitude) {
+    public Unidades(String nome, String codigoCnes, String UF, String municipio,
+                    String tipoEstabelecimento, String esferaAdministrativa,
+                    boolean atendeSus, long[] latitudeLongitude) {
         this.nome = nome;
         this.codigoCnes = codigoCnes;
         this.UF = UF;
