@@ -4,94 +4,83 @@ import br.com.fatec.saes_cnes_grupo10.model.Unidades;
 import br.com.fatec.saes_cnes_grupo10.service.UnidadesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/Unidades")
 public class UnidadesController {
+    private final UnidadesService unidadesService;
 
-    private final UnidadesService UnidadesService;
-
-    public UnidadesController(UnidadesService UnidadesService) {
-        this.UnidadesService = UnidadesService;
+    public UnidadesController(UnidadesService unidadesService) {
+        this.unidadesService = unidadesService;
     }
 
     @GetMapping
     public ResponseEntity<List<Unidades>> listar() {
-        return ResponseEntity.ok().body(UnidadesService.listar());
+        return ResponseEntity.ok(unidadesService.listar());
     }
 
     @PostMapping
-    public ResponseEntity<Unidades> salvar(@RequestBody Unidades Unidades) {
-        Unidades novoUnidades = UnidadesService.salvar(Unidades);
-        return ResponseEntity.ok(novoUnidades);
+    public ResponseEntity<Unidades> salvar(@RequestBody Unidades unidade) {
+        Unidades novaUnidade = unidadesService.salvar(unidade);
+        return ResponseEntity.ok(novaUnidade);
     }
 
     @PostMapping("/importar")
-    public ResponseEntity<String> importarArquivo(
-            @RequestParam("arquivo") MultipartFile arquivo) {
+    public ResponseEntity<Map<String, Integer>> importarArquivo(@RequestParam("arquivo") MultipartFile arquivo) {
         try {
-            int quantidade = UnidadesService.importarArquivo(arquivo);
-            return ResponseEntity.ok(
-                    quantidade + " usuários importados com sucesso."
-            );
+            Map<String, Integer> resultado = unidadesService.importarArquivo(arquivo);
 
+            return ResponseEntity.ok(resultado);
         } catch (IllegalArgumentException erro) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Arquivo inválido: " + erro.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Unidades> buscarPorId(@PathVariable Long id) {
-        Optional<Unidades> Unidades = UnidadesService.buscarPorId(id);
-        return Unidades.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Unidades> unidade = unidadesService.buscarPorId(id);
+
+        return unidade.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable long id) {
-        if (UnidadesService.buscarPorId(id).isPresent()) {
-            UnidadesService.deletar(id);
+        if (unidadesService.buscarPorId(id).isPresent()) {
+            unidadesService.deletar(id);
             return ResponseEntity.noContent().build();
         }
+
         return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Unidades> atualizar(
             @PathVariable("id") long id,
-            @RequestBody Unidades Unidades) {
-        return UnidadesService.atualizar(id, Unidades)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+            @RequestBody Unidades unidade) {
+
+        return unidadesService.atualizar(id, unidade).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    
-    //ADICIONAR FILTRO!
     @GetMapping("/filtro")
-    public ResponseEntity<List<String>> filtrar(
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String categoria,
-            @RequestParam(required = false) String codigoCnes,
-            @RequestParam(required = false) String UF,
-            @RequestParam(required = false) String municipio,
-            @RequestParam(required = false) String tipoEstabelecimento,
-            @RequestParam(required = false) String esferaAdministrativa,
-            @RequestParam(required = false) boolean atendeSus,
-            @RequestParam(required = false) long[] latitudeLongitude) {
+    public ResponseEntity<List<Unidades>> filtrar(@RequestParam(required = false) String nome, @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String codigoCnes, @RequestParam(required = false) String UF, 
+            @RequestParam(required = false) String municipio, @RequestParam(required = false) String tipoEstabelecimento, 
+            @RequestParam(required = false) String esferaAdministrativa, @RequestParam(required = false) Boolean atendeSus, 
+            @RequestParam(required = false) Double latitude, @RequestParam(required = false) Double longitude) {
 
-        // Lógica de filtragem integrada aqui
-        List<Unidades> unidades = UnidadesService.filtrar(nome, categoria, codigoCnes, UF,
-                esferaAdministrativa, atendeSus, latitudeLongitude);
+        List<Unidades> unidades = unidadesService.filtrar(nome, categoria, codigoCnes, UF, municipio, tipoEstabelecimento, esferaAdministrativa,
+                atendeSus, latitude, longitude
+        );
 
         if (unidades.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(Unidades);
+
+        return ResponseEntity.ok(unidades);
     }
 }

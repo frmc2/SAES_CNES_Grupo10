@@ -1,6 +1,5 @@
 package br.com.fatec.saes_cnes_grupo10.model;
 
-import br.com.fatec.saes_cnes_grupo10.service.UnidadesService;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,14 +17,14 @@ public class Unidades {
     private String tipoEstabelecimento;
     private String esferaAdministrativa;
     private boolean atendeSus;
-    private long[] latitudeLongitude = new long[2];
+    private Double latitude;
+    private Double longitude;
 
     public Unidades() {
     }
 
-    public Unidades(String nome, String codigoCnes, String UF, String municipio,
-                    String tipoEstabelecimento, String esferaAdministrativa,
-                    boolean atendeSus, long[] latitudeLongitude) {
+    public Unidades(String nome, String codigoCnes, String UF, String municipio, String tipoEstabelecimento, String esferaAdministrativa, 
+        boolean atendeSus, Double latitude, Double longitude) {
         this.nome = nome;
         this.codigoCnes = codigoCnes;
         this.UF = UF;
@@ -33,13 +32,13 @@ public class Unidades {
         this.tipoEstabelecimento = tipoEstabelecimento;
         this.esferaAdministrativa = esferaAdministrativa;
         this.atendeSus = atendeSus;
-        this.latitudeLongitude = latitudeLongitude;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public long getId() {
         return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
@@ -47,7 +46,6 @@ public class Unidades {
     public String getNome() {
         return nome;
     }
-
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -55,7 +53,6 @@ public class Unidades {
     public String getCodigoCnes() {
         return codigoCnes;
     }
-
     public void setCodigoCnes(String CodigoCnes) {
         this.codigoCnes = CodigoCnes;
     }
@@ -63,7 +60,6 @@ public class Unidades {
     public String getUF() {
         return UF;
     }
-
     public void setUF(String UF) {
         this.UF = UF;
     }
@@ -71,7 +67,6 @@ public class Unidades {
     public String getmunicipio() {
         return municipio;
     }
-
     public void setmunicipio(String municipio) {
         this.municipio = municipio;
     }
@@ -79,7 +74,6 @@ public class Unidades {
     public String getTipoEstabelecimento() {
         return tipoEstabelecimento;
     }
-
     public void setTipoEstabelecimento(String tipoEstabelecimento) {
         this.tipoEstabelecimento = tipoEstabelecimento;
     }
@@ -87,7 +81,6 @@ public class Unidades {
     public String getEsferaAdministrativa() {
         return esferaAdministrativa;
     }
-
     public void setEsferaAdministrativa(String esferaAdministrativa) {
         this.esferaAdministrativa = esferaAdministrativa;
     }
@@ -95,17 +88,21 @@ public class Unidades {
     public boolean isAtendeSus() {
         return atendeSus;
     }
-
     public void setAtendeSus(boolean atendeSus) {
         this.atendeSus = atendeSus;
     }
 
-    public long[] getLatitudeLongitude() {
-        return latitudeLongitude;
+    public Double getLatitude() {
+        return latitude;
+    }
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
-    public void setLatitudeLongitude(long[] latitudeLongitude) {
-        this.latitudeLongitude = latitudeLongitude;
+    public Double getLongitude() {
+        return longitude;
     }
-
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 }

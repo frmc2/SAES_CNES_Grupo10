@@ -51,7 +51,6 @@ public class UnidadesService {
             }
 
             cabecalho = cabecalho.replace("\uFEFF", "").trim();
-
             String esperado = "codigoCnes;nome;UF;municipio;tipoEstabelecimento;" + "esferaAdministrativa;atendeSus;latitude;longitude";
 
             if (!cabecalho.equalsIgnoreCase(esperado)) {
@@ -82,32 +81,25 @@ public class UnidadesService {
                     String municipio = dados[3].trim();
                     String tipo = dados[4].trim();
                     String esfera = dados[5].trim();
-                    String atendeTexto =
-                        dados[6].trim().toLowerCase(Locale.ROOT);
+                    String atendeTexto = dados[6].trim().toLowerCase(Locale.ROOT);
+                    double latitude = Double.parseDouble(dados[7].trim().replace(",", "."));
+                    double longitude = Double.parseDouble(dados[8].trim().replace(",", "."));
 
-                    if (codigo.isEmpty() || nome.isEmpty()
-                            || uf.isEmpty() || municipio.isEmpty()) {
+                    if (codigo.isEmpty() || nome.isEmpty() || uf.isEmpty() || municipio.isEmpty()) {
                         rejeitadas++;
                         continue;
                     }
 
-                    if (!codigosDoArquivo.add(codigo)
-                            || unidadesRepository
-                                .existsByCodigoCnes(codigo)) {
+                    if (!codigosDoArquivo.add(codigo) || unidadesRepository.existsByCodigoCnes(codigo)) {
                         duplicadas++;
                         continue;
                     }
 
                     boolean atendeSus;
 
-                    if (atendeTexto.equals("true")
-                            || atendeTexto.equals("sim")
-                            || atendeTexto.equals("1")) {
+                    if (atendeTexto.equals("true") || atendeTexto.equals("sim") || atendeTexto.equals("1")) {
                         atendeSus = true;
-                    } else if (atendeTexto.equals("false")
-                            || atendeTexto.equals("nao")
-                            || atendeTexto.equals("não")
-                            || atendeTexto.equals("0")) {
+                    } else if (atendeTexto.equals("false") || atendeTexto.equals("nao") || atendeTexto.equals("não") || atendeTexto.equals("0")) {
                         atendeSus = false;
                     } else {
                         rejeitadas++;
@@ -122,6 +114,8 @@ public class UnidadesService {
                     unidade.setTipoEstabelecimento(tipo);
                     unidade.setEsferaAdministrativa(esfera);
                     unidade.setAtendeSus(atendeSus);
+                    unidade.setLatitude(latitude);
+                    unidade.setLongitude(longitude);
 
                     importadas.add(unidade);
 
@@ -131,7 +125,6 @@ public class UnidadesService {
             }
 
             unidadesRepository.saveAll(importadas);
-
         } catch (IOException erro) {
             throw new IllegalArgumentException(
                 "Não foi possível ler o arquivo."
@@ -147,24 +140,21 @@ public class UnidadesService {
         return resultado;
     }
 
-    public List<Unidades> filtrar(
-            String nome, String cidade, String estado) {
-
+    
+    public List<Unidades> filtrar(String nome, String categoria, String codigoCnes, String UF, String municipio, String tipoEstabelecimento, 
+        String esferaAdministrativa, Boolean atendeSus, Double latitude, Double longitude) {
         List<Unidades> resultado = unidadesRepository.findAll();
 
-        return resultado.stream()
-            .filter(u -> nome == null || nome.isBlank()
-                || (u.getNome() != null &&
-                    u.getNome().toLowerCase().contains(
-                        nome.toLowerCase())))
-            .filter(u -> cidade == null || cidade.isBlank()
-                || (u.getmunicipio() != null &&
-                    u.getmunicipio().toLowerCase().contains(
-                        cidade.toLowerCase())))
-            .filter(u -> estado == null || estado.isBlank()
-                || (u.getUF() != null &&
-                    u.getUF().equalsIgnoreCase(estado)))
-            .toList();
+        return resultado.stream().filter(u -> nome == null || nome.isBlank() || (u.getNome() != null && u.getNome().toLowerCase().contains(nome.toLowerCase())))
+            .filter(u -> codigoCnes == null || codigoCnes.isBlank() || (u.getCodigoCnes() != null && u.getCodigoCnes().contains(codigoCnes)))
+            .filter(u -> UF == null || UF.isBlank() || (u.getUF() != null && u.getUF().equalsIgnoreCase(UF)))
+            .filter(u -> municipio == null || municipio.isBlank() || (u.getmunicipio() != null && u.getmunicipio().toLowerCase().contains(municipio.toLowerCase())))
+            .filter(u -> tipoEstabelecimento == null || tipoEstabelecimento.isBlank() || (u.getTipoEstabelecimento() != null && u.getTipoEstabelecimento().equalsIgnoreCase(tipoEstabelecimento)))
+            .filter(u -> esferaAdministrativa == null || esferaAdministrativa.isBlank() || (u.getEsferaAdministrativa() != null && u.getEsferaAdministrativa().equalsIgnoreCase(esferaAdministrativa)))
+            .filter(u -> atendeSus == null || u.isAtendeSus() == atendeSus)
+            .filter(u -> categoria == null || categoria.isBlank() || (u.getTipoEstabelecimento() != null && u.getTipoEstabelecimento().equalsIgnoreCase(categoria)))
+            .filter(u -> latitude == null || (u.getLatitude() != null && u.getLatitude().equals(latitude)))
+            .filter(u -> longitude == null || (u.getLongitude() != null && u.getLongitude().equals(longitude))).toList();
     }
 
     public List<Unidades> listar() {
@@ -185,27 +175,17 @@ public class UnidadesService {
         unidadesRepository.deleteById(id);
     }
 
-    public Optional<Unidades> atualizar(
-            long id, Unidades unidadeAtualizada) {
-
+    public Optional<Unidades> atualizar(long id, Unidades unidadeAtualizada) {
         return unidadesRepository.findById(id).map(existente -> {
             existente.setNome(unidadeAtualizada.getNome());
-            existente.setCodigoCnes(
-                unidadeAtualizada.getCodigoCnes()
-            );
+            existente.setCodigoCnes(unidadeAtualizada.getCodigoCnes());
             existente.setUF(unidadeAtualizada.getUF());
-            existente.setmunicipio(
-                unidadeAtualizada.getmunicipio()
-            );
-            existente.setTipoEstabelecimento(
-                unidadeAtualizada.getTipoEstabelecimento()
-            );
-            existente.setEsferaAdministrativa(
-                unidadeAtualizada.getEsferaAdministrativa()
-            );
-            existente.setAtendeSus(
-                unidadeAtualizada.isAtendeSus()
-            );
+            existente.setmunicipio(unidadeAtualizada.getmunicipio());
+            existente.setTipoEstabelecimento(unidadeAtualizada.getTipoEstabelecimento());
+            existente.setEsferaAdministrativa(unidadeAtualizada.getEsferaAdministrativa());
+            existente.setAtendeSus(unidadeAtualizada.isAtendeSus());
+            existente.setLatitude(unidadeAtualizada.getLatitude());
+            existente.setLongitude(unidadeAtualizada.getLongitude());
 
             return unidadesRepository.save(existente);
         });
