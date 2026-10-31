@@ -1,25 +1,25 @@
 
-const API_URL = '/api/estabelecimentos';
+const API_URL = '/api/Unidades';
 let chartInstance = null;
 
 document.addEventListener('DOMContentLoaded', carregarDados);
 
-// CARREGAR DADOS
+// CARREGAR UNIDADES
 async function carregarDados(manterFiltros = false) {
     if (!manterFiltros) {
         document.getElementById('filtroUf').value = '';
         document.getElementById('filtroTipo').value = '';
     }
 
-    const uf = document.getElementById('filtroUf').value;
+    const UF = document.getElementById('filtroUf').value;
     const tipo = document.getElementById('filtroTipo').value;
 
     const params = new URLSearchParams();
 
-    if (uf) params.append('uf', uf);
+    if (UF) params.append('uf', UF);
     if (tipo) params.append('tipo', tipo);
 
-    const url = manterFiltros && (uf || tipo)
+    const url = manterFiltros && (UF || tipo)
         ? `${API_URL}/filtro?${params.toString()}`
         : API_URL;
 
@@ -27,27 +27,27 @@ async function carregarDados(manterFiltros = false) {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error('Erro ao carregar os dados.');
+            throw new Error('Erro ao carregar unidades.');
         }
 
-        const data = await response.json();
+        const unidades = await response.json();
 
-        renderizarTabela(data);
-        atualizarGrafico(data);
+        renderizarTabela(unidades);
+        atualizarGrafico(unidades);
 
     } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        console.error("Erro ao buscar unidades:", error);
     }
 }
 
 // APLICAR FILTRO
 async function aplicarFiltro() {
-    const uf = document.getElementById('filtroUf').value;
+    const UF = document.getElementById('filtroUf').value;
     const tipo = document.getElementById('filtroTipo').value;
 
     const params = new URLSearchParams();
 
-    if (uf) params.append('uf', uf);
+    if (UF) params.append('uf', UF);
     if (tipo) params.append('tipo', tipo);
 
     try {
@@ -57,40 +57,40 @@ async function aplicarFiltro() {
             throw new Error('Erro ao aplicar filtro.');
         }
 
-        const data = await response.json();
+        const unidades = await response.json();
 
-        renderizarTabela(data);
-        atualizarGrafico(data);
+        renderizarTabela(unidades);
+        atualizarGrafico(unidades);
 
     } catch (error) {
         console.error("Erro no filtro:", error);
     }
 }
 
-// RENDERIZAR TABELA
-function renderizarTabela(dados) {
+// RENDERIZAR TABELA DE UNIDADES
+function renderizarTabela(unidades) {
     const tbody = document.getElementById('tabelaCorpo');
 
     tbody.innerHTML = '';
 
-    dados.forEach(est => {
+    unidades.forEach(unidade => {
         const tr = document.createElement('tr');
 
         tr.innerHTML = `
-            <td>${est.id}</td>
-            <td>${est.codigoCnes || ''}</td>
-            <td>${est.nomeEstabelecimento || ''}</td>
-            <td>${est.uf || ''}</td>
-            <td>${est.tipoEstabelecimento || ''}</td>
-            <td>${est.atendeSus ? 'Sim' : 'Não'}</td>
+            <td>${unidade.id}</td>
+            <td>${unidade.codigoCnes || ''}</td>
+            <td>${unidade.nome || ''}</td>
+            <td>${unidade.UF || ''}</td>
+            <td>${unidade.tipo || ''}</td>
+            <td>${unidade.atendeSus ? 'Sim' : 'Não'}</td>
             <td>
                 <button class="btn btn-sm btn-warning me-1"
-                    onclick="editar(${est.id})">
+                    onclick="editar(${unidade.id})">
                     Editar
                 </button>
 
                 <button class="btn btn-sm btn-danger"
-                    onclick="excluir(${est.id})">
+                    onclick="excluir(${unidade.id})">
                     Excluir
                 </button>
             </td>
@@ -100,10 +100,10 @@ function renderizarTabela(dados) {
     });
 
     document.getElementById('contadorRegistros').textContent =
-        `${dados.length} registros`;
+        `${unidades.length} registros`;
 }
 
-// BUSCAR POR ID
+// BUSCAR UNIDADE POR ID
 async function buscarPorId() {
     const id = document.getElementById('buscaId').value;
 
@@ -116,72 +116,72 @@ async function buscarPorId() {
         const response = await fetch(`${API_URL}/${id}`);
 
         if (!response.ok) {
-            alert('Estabelecimento não encontrado.');
+            alert('Unidade não encontrada.');
             return;
         }
 
-        const data = await response.json();
+        const unidade = await response.json();
 
-        renderizarTabela([data]);
-        atualizarGrafico([data]);
+        renderizarTabela([unidade]);
+        atualizarGrafico([unidade]);
 
     } catch (error) {
-        console.error("Erro ao buscar por ID:", error);
+        console.error("Erro ao buscar unidade:", error);
     }
 }
 
-// EDITAR ESTABELECIMENTO
+// EDITAR UNIDADE
 async function editar(id) {
     try {
         const response = await fetch(`${API_URL}/${id}`);
 
         if (!response.ok) {
-            alert('Erro ao buscar estabelecimento.');
+            alert('Erro ao buscar unidade.');
             return;
         }
 
-        const est = await response.json();
+        const unidade = await response.json();
 
-        document.getElementById('id').value = est.id;
-        document.getElementById('codigoCnes').value = est.codigoCnes;
-        document.getElementById('nomeEstabelecimento').value = est.nomeEstabelecimento;
-        document.getElementById('uf').value = est.uf;
-        document.getElementById('municipio').value = est.municipio;
-        document.getElementById('tipoEstabelecimento').value = est.tipoEstabelecimento || '';
-        document.getElementById('esferaAdministrativa').value = est.esferaAdministrativa || '';
-        document.getElementById('atendeSus').checked = est.atendeSus;
+        document.getElementById('id').value = unidade.id;
+        document.getElementById('codigoCnes').value = unidade.codigoCnes;
+        document.getElementById('nome').value = unidade.nome;
+        document.getElementById('uf').value = unidade.UF;
+        document.getElementById('municipio').value = unidade.municipio;
+        document.getElementById('tipo').value = unidade.tipo || '';
+        document.getElementById('esferaAdministrativa').value = unidade.esferaAdministrativa || '';
+        document.getElementById('atendeSus').checked = unidade.atendeSus;
 
-        document.getElementById('formTitle').textContent = 'Editar Estabelecimento';
+        document.getElementById('formTitle').textContent =
+            'Editar Unidade';
 
         document.getElementById('formMsg').innerHTML = '';
 
-        document.getElementById('formEstabelecimento').scrollIntoView({
+        document.getElementById('formUnidades').scrollIntoView({
             behavior: 'smooth'
         });
 
     } catch (error) {
-        console.error("Erro ao editar:", error);
+        console.error("Erro ao editar unidade:", error);
     }
 }
 
-// SALVAR CADASTRO OU EDIÇÃO
-document.getElementById('formEstabelecimento').addEventListener('submit', async function(event) {
+// SALVAR OU ATUALIZAR UNIDADE
+document.getElementById('formUnidades').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const id = document.getElementById('id').value;
 
-    const estabelecimento = {
+    const unidade = {
         codigoCnes: document.getElementById('codigoCnes').value,
-        nomeEstabelecimento: document.getElementById('nomeEstabelecimento').value,
-        uf: document.getElementById('uf').value,
+        nome: document.getElementById('nome').value,
+        UF: document.getElementById('uf').value,
         municipio: document.getElementById('municipio').value,
-        tipoEstabelecimento: document.getElementById('tipoEstabelecimento').value,
+        tipoUnidades: document.getElementById('tipo').value,
         esferaAdministrativa: document.getElementById('esferaAdministrativa').value,
         atendeSus: document.getElementById('atendeSus').checked
     };
 
     const metodo = id ? 'PUT' : 'POST';
-
     const url = id ? `${API_URL}/${id}` : API_URL;
 
     try {
@@ -190,15 +190,15 @@ document.getElementById('formEstabelecimento').addEventListener('submit', async 
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(estabelecimento)
+            body: JSON.stringify(unidade)
         });
 
         if (!response.ok) {
-            throw new Error('Erro ao salvar estabelecimento.');
+            throw new Error('Erro ao salvar unidade.');
         }
 
         document.getElementById('formMsg').innerHTML =
-            '<span class="text-success">Estabelecimento salvo com sucesso!</span>';
+            '<span class="text-success">Unidade salva com sucesso!</span>';
 
         limparFormulario();
 
@@ -206,46 +206,46 @@ document.getElementById('formEstabelecimento').addEventListener('submit', async 
 
     } catch (error) {
         document.getElementById('formMsg').innerHTML =
-            '<span class="text-danger">Erro ao salvar estabelecimento.</span>';
+            '<span class="text-danger">Erro ao salvar unidade.</span>';
 
-        console.error("Erro ao salvar:", error);
+        console.error("Erro ao salvar unidade:", error);
     }
 });
 
-// LIMPAR FORMULÁRIO / CANCELAR
+// CANCELAR / LIMPAR FORMULÁRIO
 function limparFormulario() {
-    document.getElementById('formEstabelecimento').reset();
+    document.getElementById('formUnidades').reset();
 
     document.getElementById('id').value = '';
 
     document.getElementById('formTitle').textContent =
-        'Cadastrar Estabelecimento';
+        'Cadastrar Unidade';
 
     document.getElementById('formMsg').innerHTML = '';
 }
 
-// EXCLUIR ESTABELECIMENTO
+// EXCLUIR UNIDADE
 async function excluir(id) {
-    if (confirm('Confirmar exclusão?')) {
+    if (confirm('Confirmar exclusão desta unidade?')) {
         try {
             const response = await fetch(`${API_URL}/${id}`, {
                 method: 'DELETE'
             });
 
             if (!response.ok) {
-                throw new Error('Erro ao excluir estabelecimento.');
+                throw new Error('Erro ao excluir unidade.');
             }
 
             await carregarDados(true);
 
         } catch (error) {
-            console.error("Erro ao excluir:", error);
-            alert('Não foi possível excluir o estabelecimento.');
+            console.error("Erro ao excluir unidade:", error);
+            alert('Não foi possível excluir a unidade.');
         }
     }
 }
 
-// IMPORTAR CSV
+// IMPORTAR UNIDADES CSV
 async function importarDados() {
     const fileInput = document.getElementById('fileInput');
     const msgDiv = document.getElementById('importMsg');
@@ -293,14 +293,14 @@ async function importarDados() {
     }
 }
 
-// ATUALIZAR GRÁFICO
-function atualizarGrafico(dados) {
+// ATUALIZAR GRÁFICO POR UF
+function atualizarGrafico(unidades) {
     const ctx = document.getElementById('ufChart').getContext('2d');
 
-    const contagemUf = {};
+    const contagemUF = {};
 
-    dados.forEach(d => {
-        contagemUf[d.uf] = (contagemUf[d.uf] || 0) + 1;
+    unidades.forEach(unidade => {
+        contagemUF[unidade.UF] = (contagemUF[unidade.UF] || 0) + 1;
     });
 
     if (chartInstance) {
@@ -311,12 +311,12 @@ function atualizarGrafico(dados) {
         type: 'pie',
 
         data: {
-            labels: Object.keys(contagemUf),
+            labels: Object.keys(contagemUF),
 
             datasets: [{
-                label: 'Estabelecimentos',
+                label: 'Unidades',
 
-                data: Object.values(contagemUf),
+                data: Object.values(contagemUF),
 
                 backgroundColor: [
                     '#0d6efd',
