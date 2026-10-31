@@ -1,0 +1,217 @@
+body {
+    background-color: #fff0f5; /* Lavender Blush (fundo rosa bem claro) */
+    font-family: 'Poppins', sans-serif;
+    color: #4a4a4a;
+}
+
+/* Navbar */
+.navbar.bg-primary {
+    background-color: #ff69b4 !important; /* Hot Pink */
+    box-shadow: 0 4px 6px rgba(255, 105, 180, 0.2);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.navbar-text {
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+/* Cards Principais */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.1) !important;
+    margin-bottom: 25px;
+    background-color: #ffffff;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Cabeçalhos dos Cards */
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 2px solid #ffe4e1; /* Misty Rose */
+    font-weight: 600;
+    color: #ff1493; /* Deep Pink */
+    border-radius: 12px 12px 0 0 !important;
+    padding: 15px 20px;
+}
+
+/* Destaque Card Importação */
+.card.border-primary {
+    border: 2px solid #ffb6c1 !important; /* Light Pink */
+}
+
+.card.border-primary .card-header.bg-primary {
+    background-color: #ffb6c1 !important; /* Light Pink */
+    color: #ffffff !important;
+    border-bottom: none;
+}
+
+/* Botões */
+.btn-primary {
+    background-color: #ff69b4;
+    border-color: #ff69b4;
+    color: #ffffff;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #ff1493;
+    border-color: #ff1493;
+    box-shadow: 0 4px 10px rgba(255, 20, 147, 0.3);
+}
+
+.btn-success {
+    background-color: #ff1493; /* Usando rosa escuro para o salvar principal */
+    border-color: #ff1493;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #c71585; /* Medium Violet Red */
+    border-color: #c71585;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    border-color: #ffb6c1;
+    color: #ff69b4;
+}
+
+.btn-secondary:hover {
+    background-color: #ffe4e1;
+    border-color: #ffb6c1;
+    color: #ff1493;
+}
+
+.btn-outline-primary {
+    color: #ff69b4;
+    border-color: #ff69b4;
+}
+
+.btn-outline-primary:hover {
+    background-color: #ff69b4;
+    color: white;
+}
+
+/* Inputs e Formulários */
+.form-control {
+    border: 1px solid #ffc0cb; /* Pink */
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    border-color: #ff69b4;
+    box-shadow: 0 0 0 0.25rem rgba(255, 105, 180, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* Tabela */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden; /* Para manter bordas arredondadas com a tabela */
+    border: 1px solid #ffe4e1;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table-dark {
+    background-color: #ff69b4;
+    color: white;
+}
+
+.table-dark th {
+    background-color: #ff69b4;
+    border-color: #ffb6c1;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: #fff0f5; /* Rosa listrado muito suave */
+}
+
+.table-hover > tbody > tr:hover > * {
+    background-color: #ffe4e1; /* Rosa ao passar o mouse */
+    color: #ff1493;
+}
+
+.table td {
+    vertical-align: middle;
+    border-color: #ffe4e1;
+}
+
+/* Badge (Contador) */
+.badge.bg-secondary {
+    background-color: #ffb6c1 !important;
+    color: #d81b60; /* Rosa escuro/vermelho para contraste */
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 20px;
+}
+
+/* Checkbox Customizado */
+.form-check-input:checked {
+    background-color: #ff69b4;
+    border-color: #ff69b4;
+}
+
+/* Mensagens de Retorno */
+#importMsg .text-success, #formMsg .text-success {
+    color: #ff1493 !important; /* Usar rosa forte no lugar de verde para sucesso */
+    background-color: #fff0f5;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 1px solid #ffb6c1;
+    display: inline-block;
+}
+
+#importMsg .text-danger, #formMsg .text-danger {
+    color: #c71585 !important;
+    background-color: #ffe4e1;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 1px dashed #ff69b4;
+    display: inline-block;
+}
+
+/* Custom Scrollbar para a Tabela */
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #fff0f5;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #ffb6c1;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #ff69b4;
+}
