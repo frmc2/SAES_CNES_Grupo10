@@ -142,7 +142,7 @@ A entidade principal da aplicação representa um estabelecimento de saúde.
 A API disponibiliza seus recursos por meio do endpoint:
 
 ```http
-/api/estabelecimentos
+/api/unidades
 ```
 
 ### Respostas HTTP
