@@ -5,13 +5,13 @@ import br.com.fatec.saes_cnes_grupo10.service.UnidadesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/Unidades")
+@CrossOrigin(origins = "*")
 public class UnidadesController {
     private final UnidadesService unidadesService;
 
@@ -31,20 +31,22 @@ public class UnidadesController {
     }
 
     @PostMapping("/importar")
-    public ResponseEntity<Map<String, Integer>> importarArquivo(@RequestParam("arquivo") MultipartFile arquivo) {
+    public ResponseEntity importarArquivo(@RequestParam("arquivo") MultipartFile arquivo) {
         try {
             Map<String, Integer> resultado = unidadesService.importarArquivo(arquivo);
-
             return ResponseEntity.ok(resultado);
         } catch (IllegalArgumentException erro) {
-            return ResponseEntity.badRequest().build();
+            erro.printStackTrace();
+            return ResponseEntity.badRequest().build(); 
+        } catch (Exception erro) {
+            erro.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Unidades> buscarPorId(@PathVariable Long id) {
         Optional<Unidades> unidade = unidadesService.buscarPorId(id);
-
         return unidade.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -54,32 +56,21 @@ public class UnidadesController {
             unidadesService.deletar(id);
             return ResponseEntity.noContent().build();
         }
-
         return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Unidades> atualizar(
-            @PathVariable("id") long id,
-            @RequestBody Unidades unidade) {
-
+    public ResponseEntity<Unidades> atualizar(@PathVariable("id") long id, @RequestBody Unidades unidade) {
         return unidadesService.atualizar(id, unidade).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/filtro")
-    public ResponseEntity<List<Unidades>> filtrar(@RequestParam(required = false) String nome, @RequestParam(required = false) String categoria,
+    public ResponseEntity<List<Unidades>> filtrar(@RequestParam(required = false) String nome,  @RequestParam(required = false) String categoria,
             @RequestParam(required = false) String codigoCnes, @RequestParam(required = false) String UF, 
             @RequestParam(required = false) String municipio, @RequestParam(required = false) String tipoEstabelecimento, 
-            @RequestParam(required = false) String esferaAdministrativa, @RequestParam(required = false) Boolean atendeSus, 
-            @RequestParam(required = false) Double latitude, @RequestParam(required = false) Double longitude) {
-
-        List<Unidades> unidades = unidadesService.filtrar(nome, categoria, codigoCnes, UF, municipio, tipoEstabelecimento, esferaAdministrativa,
-                atendeSus, latitude, longitude
-        );
-
-        if (unidades.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
+            @RequestParam(required = false) String esferaAdministrativa,  @RequestParam(required = false) Double latitude, 
+            @RequestParam(required = false) Double longitude) {
+        List<Unidades> unidades = unidadesService.filtrar(nome, categoria, codigoCnes, UF, municipio, tipoEstabelecimento, esferaAdministrativa, latitude, longitude);
 
         return ResponseEntity.ok(unidades);
     }
